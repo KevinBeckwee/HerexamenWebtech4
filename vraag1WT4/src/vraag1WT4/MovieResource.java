@@ -36,6 +36,7 @@ public class MovieResource {
             List<String> moviesList = jedis.lrange("movies", 0 , jedis.llen("movies"));
             
 
+
             Boolean notInDB = true;
             String returnJSON = "";
             Iterator var10 = moviesList.iterator();
@@ -56,15 +57,16 @@ public class MovieResource {
             }
 
             if (notInDB.booleanValue()) {
-                Response response = ClientBuilder.newClient().target("http://echo.jsontest.com/movie/" + title + "/year/2016").request(new String[]{"application/json"}).get();
+                Response response = ClientBuilder.newClient().target("http://www.omdbapi.com/?t=" + title + "&apikey=plzBanMe").request(new String[]{"application/json"}).get();
                 String jsonString = response.readEntity(String.class);
                 JsonReader jsonReader = Json.createReader(new StringReader(jsonString));
                 object = jsonReader.readObject();
                 jsonReader.close();
                 Document movie = new Document();
-                movie.append("title", object.getString("movie"));
-                movie.append("year", object.getString("year"));
-                jedis.append("movies",movie.toString());
+                movie.append("title", object.getString("Title"));
+                movie.append("year", object.getString("Released"));
+                movie.append("Actors", object.getString("Actors"));
+                jedis.rpush("movies",movie.toString());
                 jedis.close();
                 returnJSON = object.toString();
                 System.out.println("opgehaald en opgeslagen");
