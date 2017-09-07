@@ -1,0 +1,14 @@
+<h1>Here are the details for: {{ product.name }} </h1>
+<br/>
+<ul>
+    <li>ID: {{ product.id }}</li>
+    <li>Price: {{ product.price }} </li>
+    <li>Name: {{ product.name }} </li>
+    <li>Brand: {{ product.brand }} </li>
+    <li>Description: {{ product.description }} </li>
+</ul>
+
+<form method="post" action="/testapp/{{ product.id }}/delete">
+  {% csrf_token %}
+  <input type="submit" value="Delete"</input>
+</form>
